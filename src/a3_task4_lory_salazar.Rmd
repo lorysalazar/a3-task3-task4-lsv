@@ -5,7 +5,7 @@ date: "11/10/2020"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, echo = TRUE, message = FALSE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(here)
@@ -48,6 +48,7 @@ ggplot(data = purple_urchins, aes(x = SIZE)) +
 Based on the two histograms, it looks like the control sample might follow a normal distribution. The annual sample is less normal. Both samples appear to vary in size of the purple urchins, without a clear pattern explaining the data. Because both samples show varied observations, there is a chance that their means are similar. 
 
 After creating the histograms, I create qq-plots to look at the same subset of the data.
+
 ```{r}
 ggplot(data = purple_urchins, aes(sample = SIZE)) +
   geom_qq() +

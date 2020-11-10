@@ -1,0 +1,30 @@
+---
+title: "a3_task4_lory_salazar"
+author: "Lory Salazar"
+date: "11/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(lubridate)
+```
+
+### Comparing mean size of purple urchins in control or annual sections
+
+I will be looking at the mean sizes for the purple urchin species in Naples Reef in January 2010 to compare urchins in the control, meaning no giant kelp removal, or annual, meaning annual kelp removal, sections.
+
+First, I read in the urchins dataset. 
+
+```{r}
+urchins <- read_csv(here("data", "urchins.csv"))
+```
+
+After reading in the dataset, I create a subset of the data to only include the purple urchins in Naples Reef observed in January 2010.
+
+```{r}
+
+```
+

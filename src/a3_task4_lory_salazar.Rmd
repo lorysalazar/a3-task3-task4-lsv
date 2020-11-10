@@ -12,7 +12,7 @@ library(here)
 library(lubridate)
 ```
 
-### Comparing mean size of purple urchins in control or annual sections
+## Comparing mean size of purple urchins in control or annual sections
 
 I will be looking at the mean sizes for the purple urchin species in Naples Reef in January 2010 to compare urchins in the control, meaning no giant kelp removal, or annual, meaning annual kelp removal, sections.
 
@@ -25,6 +25,68 @@ urchins <- read_csv(here("data", "urchins.csv"))
 After reading in the dataset, I create a subset of the data to only include the purple urchins in Naples Reef observed in January 2010.
 
 ```{r}
-
+purple_urchins <- urchins %>% 
+  filter(COMMON_NAME == "Purple Urchin", SITE == "NAPL") %>% 
+  mutate(date_new = mdy(DATE)) %>% 
+  mutate(year = year(date_new)) %>% 
+  mutate(month = month(date_new)) %>% 
+  filter(month == 1, year == 2010)
 ```
+
+## Looking at histograms and QQ-plots for the purple urchins dataset
+
+After creating a subset of the data, I create histograms and QQ-plots to look at the size distribution for the two treatments: control and annual.
+
+```{r}
+ggplot(data = purple_urchins, aes(x = SIZE)) +
+  geom_histogram() +
+  facet_wrap(~TREATMENT) + 
+  labs(x = "Size (cm)",
+       y = "Purple Urchin Count")
+```
+Based on the two histograms, it looks like the control sample might follow a normal distribution. The annual sample is less normal. Both samples appear to vary in size of the purple urchins, without a clear pattern explaining the data.
+
+After creating the histograms, I create qq-plots to look at the same subset of the data.
+```{r}
+ggplot(data = purple_urchins, aes(sample = SIZE)) +
+  geom_qq() +
+  facet_wrap(~TREATMENT)
+```
+DESCRIPTION HERE ILL DO IT LATER
+
+## Summary Table
+
+Next, I create a summary table of basic statistics to compare some measures of central tendency between the control and annual groups.
+
+```{r}
+purple_stats <- purple_urchins %>% 
+  group_by(TREATMENT) %>% 
+  summarize(mean = mean(SIZE),
+            sd = sd(SIZE),
+            median = median(SIZE),
+            sample_size = n()
+            )
+
+purple_stats
+```
+
+From the summary table, I can see that the mean for the annual group is a bit larger than the control group. Both the standard deviation and the median of the annual group are larger as well. The sample size is almost the same for both groups. When looking back at the histograms made earlier, the summary statistics are visible; you can see that there are more large positive values for the annual group than control.
+
+## Two-sample t-test
+
+In this section, I perform a two-sample t-test to compare the means of the treatment groups. The test will tell us the probability of getting two sample means that are at least that different if they were drawn from populations with the same mean. The probability value will be our p-value.
+
+```{r}
+purple_control <- purple_urchins %>% 
+  filter(TREATMENT == "CONTROL") %>% 
+  pull(SIZE)
+
+purple_annual <- purple_urchins %>% 
+  filter(TREATMENT == "ANNUAL") %>% 
+  pull(SIZE)
+
+t.test(x = purple_control, y = purple_annual)
+```
+
+
 

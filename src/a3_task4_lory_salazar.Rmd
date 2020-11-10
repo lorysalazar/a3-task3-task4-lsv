@@ -44,7 +44,8 @@ ggplot(data = purple_urchins, aes(x = SIZE)) +
   labs(x = "Size (cm)",
        y = "Purple Urchin Count")
 ```
-Based on the two histograms, it looks like the control sample might follow a normal distribution. The annual sample is less normal. Both samples appear to vary in size of the purple urchins, without a clear pattern explaining the data.
+
+Based on the two histograms, it looks like the control sample might follow a normal distribution. The annual sample is less normal. Both samples appear to vary in size of the purple urchins, without a clear pattern explaining the data. Because both samples show varied observations, there is a chance that their means are similar. 
 
 After creating the histograms, I create qq-plots to look at the same subset of the data.
 ```{r}
@@ -52,7 +53,8 @@ ggplot(data = purple_urchins, aes(sample = SIZE)) +
   geom_qq() +
   facet_wrap(~TREATMENT)
 ```
-DESCRIPTION HERE ILL DO IT LATER
+
+QQ-plots are probability plots that, if showing a linear relationship, indicates a more "perfect" normal distribution Both of the qq-plots for the annual and control do not show a good linear relationship. Therefore, I would say that the annual and control groups for purple urchins do not have a normal distribution. 
 
 ## Summary Table
 
@@ -88,5 +90,6 @@ purple_annual <- purple_urchins %>%
 t.test(x = purple_control, y = purple_annual)
 ```
 
+The two sample means for the annual and control groups, 3.73 and 3.92, have a mean difference of 0.190861. The data from earlier showed us that the standard deviation wasn't very different either. Because of the small difference, I would hypothesize that the samples may be coming from populations that have the same mean. After performing the t-test, I can see that the the probability value  is 25%, which is not enough evidence of differences between the population means. Because we don't have enough evidence, I would not be able to say that the samples are from populations with different means. The samples might be drawn from populations with the same means.
 
-
+The p-value (0.2536) tells us that, if we draw random samples from populations with the same mean, the probability of getting two sample means that are at least as different as the ones we found here is roughly 25%.

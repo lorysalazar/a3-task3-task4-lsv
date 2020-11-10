@@ -7,4 +7,99 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(lubridate)
 ```
+
+```{r}
+urchins <- read.csv(here("data", "urchins.csv"))
+```
+
+## Section 1: Comparing purple and red urchins by size
+
+In Section 1, I begin by exploring the urchins data and using different graphs and tables comparing the two species of urchins.
+
+### Purple and red urchin graphs
+
+First, I create a histogram and a box plot.
+
+```{r}
+ggplot(data = urchins, aes(x = SIZE)) +
+  geom_histogram() +
+  facet_wrap(~COMMON_NAME) +
+  labs(x = "Size (cm)",
+       y = "Urchin Count")
+```
+
+Based on these initial graphs, the red urchin sample appears to follow a fairly normal distribution. The purple urchin sample, meanwhile, is not normally distributed, and it is positively skewed, because we can see a tail in the positive direction of the x-axis. It appears that the samples might not have the same central tendencies. I would guess that the purple urchin sample has a lower measure of central tendency than red urchins.
+
+Next, I create a box plot, which will help us to visualize the measures of central tendencies. 
+
+```{r}
+ggplot(data = urchins, aes(x = SIZE)) +
+  geom_boxplot() +
+  facet_wrap(~COMMON_NAME) +
+  labs(x = "Size (cm)",
+       y = "Count")
+```
+
+The box plots for purple and red urchins show us the differences in their samples. The purple urchin sample has a median that is more positive than that of the red urchin sample. The red urchin sample has a greater difference between the whiskers, indicating a large difference between the lowest and highest values. Additionally, both red and purple urchins have some outliers that are skewing their data positively. 
+
+### Descriptive table
+
+After creating graphs to explore the data, I create a summary table containing mean, median, standard deviation, and sample size. 
+
+```{r}
+urchins_stats <- urchins %>% 
+  group_by(COMMON_NAME) %>% 
+  summarize(mean_urchins = mean(SIZE),
+            sd_urchins = sd(SIZE),
+            med_urchins = median(SIZE),
+            n_urchins = n())
+
+urchins_stats
+```
+
+
+The summary table shows us that for all of the chosen measures of central tendency, red urchin size is larger. This aligns with the assumption I made by glancing at the histograms above. The histograms show us that the purple urchin sample is positively skewed, which is represented in the summary table here. 
+The specifically, the difference in means for purple and red urchins is 2.31cm. The mean inceases by roughly 52% between the samples. 
+The difference in standard deviation is smaller, only 0.72cm, while the median difference is larger, 2.5cm.
+
+## Section 2: Exploring purple urchin counts by site and year
+
+In section 2, I begin to explore site and year, which we previously ignored. I will be looking at the purple urchins in particular and creating both a summary table and graph to explore the data.
+
+First, I make a subset of the data.
+
+```{r}
+purple_urchins <- urchins %>% 
+  filter(COMMON_NAME == "Purple Urchin") %>% 
+  mutate(date_updated = mdy(DATE)) %>% 
+  mutate(year = year(date_updated)) %>% 
+  mutate(site_full = case_when(
+    SITE == "NAPL" ~ "Naples Reef",
+    SITE == "AQUE" ~ "Arroyo Quemado Reef",
+    SITE == "CARP" ~ "Carpinteria Reef",
+    SITE == "MOHK" ~ "Mohawk Reef",
+    SITE == "IVEE" ~ "Isla Vista Reef"
+  ))
+```
+
+Next, I make a table to look at the purple urchins by site and year.
+
+```{r}
+purple_summary <- purple_urchins %>% 
+  count(site_full, year)
+```
+
+Last, I create a graph to show the counts of purple urchins recorded at each site over time, from 2008-2020.
+
+```{r}
+ggplot(data = purple_summary, aes(x = year, y = n)) +
+  geom_col() +
+  facet_wrap(~site_full) +
+  labs(x = "Time (years)",
+       y = "Count of Purple Urchins")
+```
+
